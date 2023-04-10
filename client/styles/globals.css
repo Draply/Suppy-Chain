@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.card-box {
+  display: grid;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+@media screen and (min-width: 414px) {
+  .card-box {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+@media screen and (min-width: 1024px) {
+  .card-box {
+    grid-template-columns: repeat(2, 49%);
+  }
+}
+@media screen and (min-width: 1280px) {
+  .card-box {
+    grid-template-columns: repeat(3, 32%);
+  }
+}
