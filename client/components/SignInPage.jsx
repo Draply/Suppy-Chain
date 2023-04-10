@@ -98,8 +98,14 @@ export default function SignInPage() {
             <option className="p-2.5" defaultValue="others">
               You Are...
             </option>
+            <option className="p-2.5" value="provider">
+              Provider
+            </option>
             <option className="p-2.5" value="farmer">
               Farmer
+            </option>
+            <option className="p-2.5" value="processor">
+              Processor
             </option>
             <option className="p-2.5" value="distributer">
               Distributer

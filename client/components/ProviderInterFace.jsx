@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
-import SellProduct from "../components/SellProduct";
-import Header from "../components/Header";
-import ProductCard from "../components/ProductCard";
+import SellProduct from "./SellProduct";
+import Header from "./Header";
+import ProductCard from "./ProductCard";
 import { Oval } from "react-loader-spinner";
 import { ProjectContext } from "../context/ProjectContext";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import UserDetails from "./UserDetails";
 
-export default function FarmerInterFace() {
+export default function ProviderInterFace() {
   const { currentAccount, allProducts, isLoading } = useContext(ProjectContext);
   return (
     <div className="h-full">
@@ -47,7 +47,6 @@ export default function FarmerInterFace() {
                         productName,
                         tokenId,
                         productQuantity,
-                        
                         cateory,
                         seller,
                       } = product;
@@ -57,8 +56,6 @@ export default function FarmerInterFace() {
                       let Seller = seller.toString();
                       let category = cateory.toUpperCase();
                       
-
-
 
                       if (Seller.toLowerCase() == currentAccount) {
                         return (

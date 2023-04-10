@@ -4,7 +4,9 @@ import Link from "next/link";
 import { Toaster } from "react-hot-toast";
 import { ProjectContext } from "../context/ProjectContext";
 
+import ProviderInterFace from "../components/ProviderInterFace";
 import FarmerInterFace from "../components/FarmerInterFace";
+import ProcessorInterFace from "../components/ProcessorInterFace";
 import DistributerInterFace from "../components/DistributerInterFace";
 import RetailerInterFace from "../components/RetailerInterFace";
 import ConsumerInterFace from "../components/ConsumerInterFace";
@@ -18,23 +20,27 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>DAgri</title>
-        <meta name="author" content="Sagar Gund" />
+        <title>Supply-Chain</title>
+        <meta name="author" content="DADDraply" />
         <meta name="distribution" content="global" />
         <meta name="language" content="English" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="DAgri" />
-        <meta property="og:site_name" content="DAgri" />
-        <meta property="og:url" content="https://d-agri-frontend.vercel.app/" />
+        <meta property="og:title" content="DADDraply" />
+        <meta property="og:site_name" content="DADDraply" />
+       
       </Head>
       <Toaster position="top-center" reverseOrder={false} />
 
       <div id="index" className="bg-slate-50 min-h-screen">
         {currentAccount ? (
           isSingedIn ? (
-            userProfession === "farmer" ? (
+            userProfession =="provider"?(
+              <ProviderInterFace />
+            ) : userProfession == "farmer" ? (
               <FarmerInterFace />
-            ) : userProfession === "distributer" ? (
+            ) : userProfession == "processor"? (
+              <ProcessorInterFace />
+            ) : userProfession == "distributer" ? (
               <DistributerInterFace />
             ) : userProfession == "retailer" ? (
               <RetailerInterFace />
@@ -50,10 +56,10 @@ export default function Home() {
           <div className="container mx-auto p-8 flex flex-col items-center w-screen h-screen justify-center">
             <div className="max-w-md w-full pointer-events-auto flex flex-col items-start mx-auto p-4 text-center">
               <p className="text-xl font-medium text-gray-900 w-full">
-                Welcome to DAgri!
+                Welcome to My SupplyChain!
               </p>
               <p className="mt-2 text-sm text-gray-500">
-                To use DAgri, make sure you have{" "}
+                To use this Supp, make sure you have{" "}
                 <Link
                   href="https://metamask.io/"
                   target="_blank"

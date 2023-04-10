@@ -7,12 +7,11 @@ export default function SellProduct() {
   const [values, setValues] = useState({
     name: "",
     quantity: 0,
-    price: 0n,
     category: "",
   });
 
   const listTheProduct = () => {
-    listProduct(values.name, values.quantity, values.price, values.category);
+    listProduct(values.name, values.quantity, values.category);
   };
   return (
     <div>
@@ -47,20 +46,6 @@ export default function SellProduct() {
             placeholder="Enter quantity in Kg..."
             onChange={(e) =>
               setValues((prev) => ({ ...prev, quantity: e.target.value }))
-            }
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            Product Price
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            type="number"
-            min="0"
-            placeholder="Enter price in WEI..."
-            onChange={(e) =>
-              setValues((prev) => ({ ...prev, price: e.target.value }))
             }
           />
         </div>

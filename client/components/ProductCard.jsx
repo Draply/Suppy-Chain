@@ -25,18 +25,17 @@ export default function ProductCard({
   name,
   tokenID,
   quantity,
-  price,
   Category,
   Seller,
-  Date,
+  
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [newPrice, setNewPrice] = useState(0n);
+  
   const [sellerAddress, setSellerAddress] = useState();
   const {
     currentAccount,
     cancelProduct,
-    updateProduct,
+    updateInfo,
     buyProduct,
     purchaseProduct,
     userProfession,
@@ -57,18 +56,18 @@ export default function ProductCard({
   };
 
   const handleUpdate = () => {
-    updateProduct(tokenID, newPrice);
-
+    // updateProduct(tokenID, newPrice);
+    updateInfo(tokenID, data,time)
     setModalIsOpen(!modalIsOpen);
   };
 
   const handleBuying = () => {
-    buyProduct(tokenID, price);
+    buyProduct(tokenID);
     setModalIsOpen(!modalIsOpen);
   };
 
   const handlePurchase = () => {
-    purchaseProduct(tokenID, price);
+    purchaseProduct(tokenID);
     setModalIsOpen(!modalIsOpen);
   };
 
@@ -106,26 +105,25 @@ export default function ProductCard({
               ) : (
                 <div className="ml-1">{sellerAddress}</div>
               )}
+            
+            
             </div>
             <div>
               <div className="flex mb-6 text-md font-medium text-gray-900 items-start justify-center">
-                Price : <FaEthereum className="mt-1 ml-2 mr-1" />{" "}
-                {price}
+                
               </div>
             </div>
           </div>
-          {currentAccount === Seller.toLowerCase() &&
-          userProfession !== "distributer" ? (
+          {currentAccount === Seller.toLowerCase() ? (
             <div className="w-full ">
               <div className="mb-4 w-full">
                 <label className="block mb-2 text-sm font-medium text-gray-900">
-                  New Price
+                  Update Infor
                 </label>
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-gray-700"
-                  type="number"
-                  min="0"
-                  placeholder="Enter quantity in Kg..."
+                  type="text"
+                  placeholder="Enter information"
                   onChange={(e) => setNewPrice(e.target.value)}
                 />
               </div>
@@ -191,8 +189,7 @@ export default function ProductCard({
             Total Quantity : {quantity} Kg
           </div>
           <div className="flex mb-6 text-md font-medium text-gray-900 items-start">
-            Price : <FaEthereum className="mt-1 ml-2 mr-1" />{" "}
-            {ethers.utils.formatEther(price)}
+           
           </div>
         </div>
       </div>

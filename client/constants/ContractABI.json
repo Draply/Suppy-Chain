@@ -3,17 +3,7 @@
 	"abi" :	[
     {
       "inputs": [],
-      "name": "NotListed",
-      "type": "error"
-    },
-    {
-      "inputs": [],
       "name": "NotOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "PriceMustNotZero",
       "type": "error"
     },
     {
@@ -32,9 +22,9 @@
         },
         {
           "indexed": true,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
         },
         {
           "indexed": false,
@@ -43,16 +33,28 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "productPrice",
-          "type": "uint256"
-        },
-        {
           "indexed": true,
           "internalType": "address",
           "name": "seller",
           "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created_at",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct SupplyChain.Data[]",
+          "name": "s_DataProduct",
+          "type": "tuple[]"
         }
       ],
       "name": "ItemBought",
@@ -69,15 +71,33 @@
         },
         {
           "indexed": true,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
         },
         {
           "indexed": true,
           "internalType": "address",
           "name": "seller",
           "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created_at",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct SupplyChain.Data[]",
+          "name": "s_DataProduct",
+          "type": "tuple[]"
         }
       ],
       "name": "ItemCanceled",
@@ -94,9 +114,9 @@
         },
         {
           "indexed": true,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
         },
         {
           "indexed": false,
@@ -105,16 +125,28 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "productPrice",
-          "type": "uint256"
-        },
-        {
           "indexed": true,
           "internalType": "address",
           "name": "seller",
           "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created_at",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct SupplyChain.Data[]",
+          "name": "s_DataProduct",
+          "type": "tuple[]"
         }
       ],
       "name": "ItemListed",
@@ -131,9 +163,9 @@
         },
         {
           "indexed": true,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
         },
         {
           "indexed": false,
@@ -142,16 +174,28 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "productPrice",
-          "type": "uint256"
-        },
-        {
           "indexed": true,
           "internalType": "address",
           "name": "seller",
           "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created_at",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct SupplyChain.Data[]",
+          "name": "s_DataProduct",
+          "type": "tuple[]"
         }
       ],
       "name": "ItemPurchased",
@@ -168,15 +212,33 @@
         },
         {
           "indexed": true,
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
         },
         {
           "indexed": true,
           "internalType": "address",
           "name": "seller",
           "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created_at",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct SupplyChain.Data[]",
+          "name": "s_DataProduct",
+          "type": "tuple[]"
         }
       ],
       "name": "ItemUpdated",
@@ -190,7 +252,46 @@
           "type": "uint256"
         }
       ],
-      "name": "buyItem",
+      "name": "BuyItemfromProvider",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenID",
+          "type": "uint256"
+        }
+      ],
+      "name": "buyItemfromProcessor",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenID",
+          "type": "uint256"
+        }
+      ],
+      "name": "buyItemfromdistributor",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenID",
+          "type": "uint256"
+        }
+      ],
+      "name": "buyItemfromfamer",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -209,6 +310,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "generateRandomString",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -222,7 +336,17 @@
           "components": [
             {
               "internalType": "address",
+              "name": "providerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
               "name": "farmerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "processorAddress",
               "type": "address"
             },
             {
@@ -245,6 +369,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getCurrentTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -252,13 +389,49 @@
           "type": "uint256"
         }
       ],
-      "name": "getDistributerInventory",
+      "name": "getData",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "created_at",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct SupplyChain.Data[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenID",
+          "type": "uint256"
+        }
+      ],
+      "name": "getDistributorInventory",
       "outputs": [
         {
           "components": [
             {
               "internalType": "string",
               "name": "productName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "barcode",
               "type": "string"
             },
             {
@@ -269,11 +442,6 @@
             {
               "internalType": "uint256",
               "name": "productQuantity",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "productPrice",
               "type": "uint256"
             },
             {
@@ -303,13 +471,18 @@
           "type": "uint256"
         }
       ],
-      "name": "getFarmersListing",
+      "name": "getFarmerInventory",
       "outputs": [
         {
           "components": [
             {
               "internalType": "string",
               "name": "productName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "barcode",
               "type": "string"
             },
             {
@@ -323,8 +496,156 @@
               "type": "uint256"
             },
             {
+              "internalType": "string",
+              "name": "cateory",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "seller",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SupplyChain.Product",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenID",
+          "type": "uint256"
+        }
+      ],
+      "name": "getProcessorInventory",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "productName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "barcode",
+              "type": "string"
+            },
+            {
               "internalType": "uint256",
-              "name": "productPrice",
+              "name": "tokenId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "productQuantity",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "cateory",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "seller",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SupplyChain.Product",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenID",
+          "type": "uint256"
+        }
+      ],
+      "name": "getProviderListing",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "productName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "barcode",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "productQuantity",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "cateory",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "seller",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SupplyChain.Product",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenID",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRetailerInventory",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "productName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "barcode",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "productQuantity",
               "type": "uint256"
             },
             {
@@ -372,11 +693,6 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "_price",
-          "type": "uint256"
-        },
-        {
           "internalType": "string",
           "name": "_category",
           "type": "string"
@@ -406,13 +722,47 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
-      "name": "s_distributerInventory",
+      "name": "s_DataProduct",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "data",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "created_at",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "s_UserInventory",
       "outputs": [
         {
           "internalType": "string",
           "name": "productName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "barcode",
           "type": "string"
         },
         {
@@ -426,8 +776,47 @@
           "type": "uint256"
         },
         {
+          "internalType": "string",
+          "name": "cateory",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
-          "name": "productPrice",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "s_distributerInventory",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "productName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "productQuantity",
           "type": "uint256"
         },
         {
@@ -460,6 +849,11 @@
           "type": "string"
         },
         {
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
+        },
+        {
           "internalType": "uint256",
           "name": "tokenId",
           "type": "uint256"
@@ -467,11 +861,6 @@
         {
           "internalType": "uint256",
           "name": "productQuantity",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "productPrice",
           "type": "uint256"
         },
         {
@@ -491,16 +880,21 @@
     {
       "inputs": [
         {
-          "internalType": "string",
+          "internalType": "uint256",
           "name": "",
-          "type": "string"
+          "type": "uint256"
         }
       ],
-      "name": "s_productDistributer",
+      "name": "s_processorInventory",
       "outputs": [
         {
           "internalType": "string",
           "name": "productName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "barcode",
           "type": "string"
         },
         {
@@ -511,11 +905,6 @@
         {
           "internalType": "uint256",
           "name": "productQuantity",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "productPrice",
           "type": "uint256"
         },
         {
@@ -544,7 +933,17 @@
       "outputs": [
         {
           "internalType": "address",
+          "name": "providerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
           "name": "farmerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "processorAddress",
           "type": "address"
         },
         {
@@ -555,6 +954,94 @@
         {
           "internalType": "address",
           "name": "retailerAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "s_providerinventory",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "productName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "productQuantity",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "cateory",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "s_retailerInventory",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "productName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "barcode",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "productQuantity",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "cateory",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "seller",
           "type": "address"
         }
       ],
@@ -577,71 +1064,25 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "_productName",
-          "type": "string"
-        }
-      ],
-      "name": "searchDistributer",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "string",
-              "name": "productName",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "productQuantity",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "productPrice",
-              "type": "uint256"
-            },
-            {
-              "internalType": "string",
-              "name": "cateory",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "seller",
-              "type": "address"
-            }
-          ],
-          "internalType": "struct SupplyChain.Product",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "uint256",
           "name": "_tokenID",
           "type": "uint256"
         },
         {
+          "internalType": "string",
+          "name": "_data",
+          "type": "string"
+        },
+        {
           "internalType": "uint256",
-          "name": "_newPrice",
+          "name": "_time",
           "type": "uint256"
         }
       ],
-      "name": "updateListing",
+      "name": "updateInfo",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     }
   ]
-}
+  }

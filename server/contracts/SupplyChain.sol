@@ -9,206 +9,291 @@ error NotOwner();
 
 contract SupplyChain {
     uint256 public s_tokenIDs;
-    struct Data{
+    struct Data {
         string data;
         uint256 created_at;
     }
+
     // State Variables
     struct Product {
         string productName;
+        string barcode;
         uint256 tokenId;
         uint256 productQuantity;
-        uint256 productPrice;
         string cateory;
         address seller;
-        Data[] DataProduct;
     }
     struct Owners {
+        address providerAddress;
         address farmerAddress;
+        address processorAddress;
         address distributerAddress;
         address retailerAddress;
     }
 
     // Mappings - To keep track of Products and it's owners
     // Farmers inventory - tokenId => Product
+    mapping(uint256 => Data[]) public s_DataProduct;
+
+    mapping(uint256 => Product) public s_providerinventory;
+
     mapping(uint256 => Product) public s_farmerInventory;
     // Distributer inventory - tokenId => Product
+    mapping(uint256 => Product) public s_processorInventory;
+
     mapping(uint256 => Product) public s_distributerInventory;
     // Token Id to all the owners
+    mapping(uint256 => Product) public s_retailerInventory;
+
     mapping(uint256 => Owners) public s_productOwners;
     // Product Name => List of products in distributers inventory
     // Because retailer may not know the token id
-    mapping(string => Product) public s_productDistributer;
-
-    mapping(uint256 =>Product) public s_UserInventory;
-
-    mapping(uint256 => Data[]) public DataProduct;
+    mapping(uint256 => Product) public s_UserInventory;
 
     // Events - fire events on state changes
     event ItemListed(
         string indexed productName,
-        uint256 indexed tokenId,
+        string indexed barcode,
         uint256 productQuantity,
-        uint256 productPrice,
         address indexed seller,
-        Data[] DataProduct
-
+        Data[] s_DataProduct
     );
     event ItemBought(
         string indexed productName,
-        uint256 indexed tokenId,
+        string indexed barcode,
         uint256 productQuantity,
-        uint256 productPrice,
         address indexed seller,
-        Data[] DataProduct
+        Data[] s_DataProduct
     );
     event ItemCanceled(
         string indexed productName,
-        uint256 indexed tokenId,
+        string indexed barcode,
         address indexed seller,
-        Data[] DataProduct
+        Data[] s_DataProduct
     );
     event ItemUpdated(
         string indexed productName,
-        uint256 indexed tokenId,
+        string indexed barcode,
         address indexed seller,
-        Data[] DataProduct
+        Data[] s_DataProduct
     );
     event ItemPurchased(
         string indexed productName,
-        uint256 indexed tokenId,
+        string indexed barcode,
         uint256 productQuantity,
-        uint256 productPrice,
         address indexed seller,
-        Data[] DataProduct
+        Data[] s_DataProduct
     );
 
     // Modifiers
     // Item not listed Yet
-    modifier notListed(uint256 _tokenID) {
-        Product memory product = s_farmerInventory[_tokenID];
-        if (product.productPrice < 0) {
-            revert NotListed();
-        }
-        _;
-    }
 
     // Can be called only by owner
     modifier isOwner(uint256 _tokenID) {
-        Product memory product = s_farmerInventory[_tokenID];
+        Product memory product = s_providerinventory[_tokenID];
         if (product.seller != msg.sender) {
             revert NotOwner();
         }
         _;
     }
+
+    uint randNonce = 0;
+
+    function generateRandomString() public returns (string memory) {
+        bytes memory randomBytes = new bytes(6);
+
+        for (uint i = 0; i < 6; i++) {
+            uint randomNumber = uint(
+                keccak256(
+                    abi.encodePacked(block.timestamp, msg.sender, randNonce)
+                )
+            ) % 26;
+            randNonce++;
+            uint8 convertedRandomNumber = uint8(randomNumber + 65);
+            randomBytes[i] = bytes1(convertedRandomNumber);
+        }
+
+        return string(randomBytes);
+    }
+
     function getCurrentTime() public view returns (uint256) {
         return block.timestamp;
     }
-    // Functions
-    /// @notice List the product details on the marketplace
-    /// @param _ProductName - Name of the product
-    /// @param _quantity - Quantity of product to be sold
-    /// @param _price price of the product to be sold
+
     function listItem(
         string memory _ProductName,
         uint256 _quantity,
-        uint256 _price,
         string memory _category
     ) external {
-        if (_price <= 0) {
-            revert PriceMustNotZero();
-        }
         s_tokenIDs++;
         uint256 currentID = s_tokenIDs;
-        Data memory newData = Data("Item Listed",block.timestamp);
-        DataProduct[currentID].push(newData);
-        s_farmerInventory[currentID] = Product(
+        Data memory newData = Data("Item Listed", block.timestamp);
+        // s_providerinventory[currentID].dataproduct.push(newData);
+        string memory barcode = generateRandomString();
+        s_providerinventory[currentID] = Product(
             _ProductName,
+            barcode,
             currentID,
             _quantity,
-            _price,
             _category,
-            msg.sender,
-            DataProduct[currentID]
-
+            msg.sender
         );
-        s_productOwners[currentID].farmerAddress = msg.sender;
-        emit ItemListed(_ProductName, currentID, _quantity, _price, msg.sender,DataProduct[currentID]);
+        s_DataProduct[currentID].push(newData);
+        s_productOwners[currentID].providerAddress = msg.sender;
+        emit ItemListed(
+            _ProductName,
+            barcode,
+            _quantity,
+            msg.sender,
+            s_DataProduct[currentID]
+        );
     }
 
-    /// @notice Update the price of an already listed product
-    /// @param _tokenID - The token id of the product to be updated
-    /// @param _newPrice - The price to which you want to update it.
-    function updateListing(
-        uint256 _tokenID,
-        uint256 _newPrice
-    ) external notListed(_tokenID) isOwner(_tokenID) {
-        s_farmerInventory[_tokenID].productPrice = _newPrice;
-        Data memory newData = Data("Item Update Price",block.timestamp);
-        DataProduct[_tokenID].push(newData);
-
-    }
+    // Cập nhật data cho sản phẩm
     function updateInfo(
         uint256 _tokenID,
-        Data memory _data
-    ) external notListed(_tokenID) isOwner(_tokenID){
-        require(_data.created_at <= block.timestamp);
-        DataProduct[_tokenID].push(_data);
+        string memory _data, uint256 _time
+    ) external {
+        require(  _time <= block.timestamp);
+        Data memory data = Data(_data,_time); 
+        s_DataProduct[_tokenID].push(data);
     }
 
     /// @notice Cancel the listing of a product
     /// @param _tokenID - The token id of the product to be canceled
-    function cancelItem(
-        uint256 _tokenID
-    ) external notListed(_tokenID) isOwner(_tokenID) {
+    function cancelItem(uint256 _tokenID) external isOwner(_tokenID) {
         Product memory product = s_farmerInventory[_tokenID];
-        delete (s_farmerInventory[_tokenID]);
-        
-        emit ItemCanceled(product.productName, _tokenID, product.seller,DataProduct[_tokenID]);
+        delete (s_providerinventory[_tokenID]);
+
+        emit ItemCanceled(
+            product.productName,
+            product.barcode,
+            product.seller,
+            s_DataProduct[_tokenID]
+        );
     }
 
     // Distributer functions
     /// @notice Buy the product from farmer and add it into distributer's inventory
     /// @param _tokenID - The token id of the product to be bought
-    function buyItem(uint256 _tokenID) external payable notListed(_tokenID) {
-        Product memory product = s_farmerInventory[_tokenID];
-        if (msg.value != product.productPrice) {
-            revert PriceNotMet();
-        }
+    function buyItemfromfamer(uint256 _tokenID) external payable {
+        Data memory newdata = Data(
+            "Farmer trans to Processor",
+            block.timestamp
+        );
+        s_DataProduct[_tokenID].push(newdata);
+
+        Product memory product = s_processorInventory[_tokenID];
         delete (s_farmerInventory[_tokenID]);
-        uint256 newPrice = (product.productPrice +
-            (product.productPrice * 20) /
-            100);
-        s_distributerInventory[_tokenID] = Product(
+        s_processorInventory[_tokenID] = Product(
             product.productName,
+            product.barcode,
             product.tokenId,
             product.productQuantity,
-            newPrice,
             product.cateory,
-            msg.sender,
-            product.DataProduct
+            msg.sender
         );
-        s_productOwners[product.tokenId].distributerAddress = msg.sender;
-        s_productDistributer[product.productName] = Product(
+        s_productOwners[product.tokenId].processorAddress = msg.sender;
+
+        emit ItemBought(
             product.productName,
+            product.barcode,
+            product.productQuantity,
+            msg.sender,
+            s_DataProduct[_tokenID]
+        );
+    }
+
+    function BuyItemfromProvider(uint256 _tokenID) external payable {
+        Product memory product = s_providerinventory[_tokenID];
+
+        delete (s_providerinventory[_tokenID]);
+        s_farmerInventory[_tokenID] = Product(
+            product.productName,
+            product.barcode,
             product.tokenId,
             product.productQuantity,
-            newPrice,
             product.cateory,
-            msg.sender,
-            product.DataProduct
+            msg.sender
         );
-        (bool success, ) = payable(product.seller).call{
-            value: product.productPrice
-        }("");
+        Data memory newdata = Data(
+            "Transfer of seeds to farmers",
+            block.timestamp
+        );
+        s_DataProduct[_tokenID].push(newdata);
+        s_productOwners[product.tokenId].farmerAddress = msg.sender;
+        (bool success, ) = payable(product.seller).call{value: 1}("");
         require(success, "call failed");
         emit ItemBought(
             product.productName,
+            product.barcode,
+            product.productQuantity,
+            msg.sender,
+            s_DataProduct[_tokenID]
+        );
+    }
+
+    function buyItemfromProcessor(uint256 _tokenID) external payable {
+        Data memory newdata = Data(
+            "Processor trans to Distributor",
+            block.timestamp
+        );
+        s_DataProduct[_tokenID].push(newdata);
+
+        Product memory product = s_distributerInventory[_tokenID];
+        if (msg.value != 1) {
+            revert PriceNotMet();
+        }
+        delete (s_processorInventory[_tokenID]);
+        s_distributerInventory[_tokenID] = Product(
+            product.productName,
+            product.barcode,
             product.tokenId,
             product.productQuantity,
-            newPrice,
+            product.cateory,
+            msg.sender
+        );
+        s_productOwners[product.tokenId].distributerAddress = msg.sender;
+        (bool success, ) = payable(product.seller).call{value: 1}("");
+        require(success, "call failed");
+        emit ItemBought(
+            product.productName,
+            product.barcode,
+            product.productQuantity,
             msg.sender,
-            product.DataProduct
+            s_DataProduct[_tokenID]
+        );
+    }
+
+    function buyItemfromdistributor(uint256 _tokenID) external payable {
+        Data memory newdata = Data(
+            "Distributor trans to ReTailer",
+            block.timestamp
+        );
+        s_DataProduct[_tokenID].push(newdata);
+
+        Product memory product = s_retailerInventory[_tokenID];
+        if (msg.value != 1) {
+            revert PriceNotMet();
+        }
+        delete (s_distributerInventory[_tokenID]);
+        s_retailerInventory[_tokenID] = Product(
+            product.productName,
+            product.barcode,
+            product.tokenId,
+            product.productQuantity,
+            product.cateory,
+            msg.sender
+        );
+        s_productOwners[product.tokenId].retailerAddress = msg.sender;
+        (bool success, ) = payable(product.seller).call{value: 1}("");
+        require(success, "call failed");
+        emit ItemBought(
+            product.productName,
+            product.barcode,
+            product.productQuantity,
+            msg.sender,
+            s_DataProduct[_tokenID]
         );
     }
 
@@ -217,41 +302,53 @@ contract SupplyChain {
     /// @param _tokenID - The token id of the product to be bought
     function purchaseItem(uint256 _tokenID) external payable {
         Product memory product = s_distributerInventory[_tokenID];
-        if (product.productPrice < 0) {
-            revert NotListed();
-        }
-        if (msg.value != product.productPrice) {
+        if (msg.value != 1) {
             revert PriceNotMet();
         }
         delete (s_distributerInventory[_tokenID]);
-        delete (s_productDistributer[product.productName]);
+
         s_productOwners[product.tokenId].retailerAddress = msg.sender;
-        (bool success, ) = payable(product.seller).call{
-            value: product.productPrice
-        }("");
+        (bool success, ) = payable(product.seller).call{value: 1}("");
         require(success, "call failed");
         emit ItemPurchased(
             product.productName,
-            product.tokenId,
+            product.barcode,
             product.productQuantity,
-            product.productPrice,
             msg.sender,
-            product.DataProduct
+            s_DataProduct[_tokenID]
         );
     }
 
     // Getter functions
 
-    function getFarmersListing(
+    function getProviderListing(
+        uint256 _tokenID
+    ) external view returns (Product memory) {
+        return s_providerinventory[_tokenID];
+    }
+
+    function getFarmerInventory(
         uint256 _tokenID
     ) external view returns (Product memory) {
         return s_farmerInventory[_tokenID];
     }
 
-    function getDistributerInventory(
+    function getProcessorInventory(
+        uint256 _tokenID
+    ) external view returns (Product memory) {
+        return s_processorInventory[_tokenID];
+    }
+
+    function getDistributorInventory(
         uint256 _tokenID
     ) external view returns (Product memory) {
         return s_distributerInventory[_tokenID];
+    }
+
+    function getRetailerInventory(
+        uint256 _tokenID
+    ) external view returns (Product memory) {
+        return s_retailerInventory[_tokenID];
     }
 
     function getAllOwners(
@@ -260,13 +357,11 @@ contract SupplyChain {
         return s_productOwners[_tokenID];
     }
 
-    function searchDistributer(
-        string memory _productName
-    ) external view returns (Product memory) {
-        return s_productDistributer[_productName];
-    }
-
     function getTokenId() external view returns (uint256) {
         return s_tokenIDs;
+    }
+
+    function getData(uint256 _tokenID) external view returns (Data[] memory) {
+        return s_DataProduct[_tokenID];
     }
 }
