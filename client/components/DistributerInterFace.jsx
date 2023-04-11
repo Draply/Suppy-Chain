@@ -9,13 +9,14 @@ import { AiOutlineArrowRight } from "react-icons/ai";
 import UserDetails from "./UserDetails";
 
 export default function DistributerInterFace() {
-  const { currentAccount, allProducts, isLoading, distributerInventory, getDistributerInventory } =
+  const { currentAccount, allProducts, isLoading, getProcessorInventory,
+    processorInventory, } =
     useContext(ProjectContext);
 
 
   React.useEffect(() => {
 
-    getDistributerInventory()
+    getProcessorInventory()
   }, [])
 
   console.log('Distributer');
@@ -70,7 +71,7 @@ export default function DistributerInterFace() {
                     }}
                     className="z-0 w-full ml-8"
                   >
-                    {distributerInventory.map((product) => {
+                    {processorInventory.map((product) => {
                       let {
                         productName,
                         tokenId,

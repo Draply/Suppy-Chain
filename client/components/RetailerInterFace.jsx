@@ -15,9 +15,15 @@ export default function RetailerInterFace() {
     currentAccount,
     allProducts,
     isLoading,
-    distributerInventory,
     productDistributer,
+    getDistributerInventory,
+    distributerInventory,
   } = useContext(ProjectContext);
+
+  React.useEffect(() => {
+    getDistributerInventory()
+  }, [])
+
   return (
     <div className="h-full">
       <Header />

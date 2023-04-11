@@ -34,7 +34,10 @@ export default function ProductCard({
     currentAccount,
     cancelProduct,
     updateInfo,
-    buyProduct,
+    buyItemfromProcessor,
+    buyItemfromdistributor,
+    buyItemfromprovider,
+    buyItemfromfamer,
     purchaseProduct,
     userProfession,
   } = useContext(ProjectContext);
@@ -54,7 +57,6 @@ export default function ProductCard({
   };
 
   const handleUpdate = (data) => {
-    // updateProduct(tokenID, newPrice);
 
     if (date && data) {
 
@@ -65,8 +67,18 @@ export default function ProductCard({
     }
   };
 
-  const handleBuying = () => {
-    buyProduct(tokenID);
+  const handleBuying = async () => {
+    if (userProfession == "retailer") {
+      await buyItemfromdistributor(tokenID);
+    } else if (userProfession == "farmer") {
+      await buyItemfromprovider(tokenID);
+    } else if (userProfession == "processor") {
+      await buyItemfromfamer(tokenID);
+    } else if (userProfession == "distributer") {
+      await buyItemfromProcessor(tokenID);
+    } else {
+      return;
+    }
     setModalIsOpen(!modalIsOpen);
   };
 

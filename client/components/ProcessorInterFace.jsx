@@ -14,15 +14,15 @@ export default function ProcessorInterFace() {
     currentAccount,
     allProducts,
     isLoading,
-    processorInventory,
+    farmerInventory,
     productDistributer,
-    getProcessorInventory
+    getFarmerInventory
   } = useContext(ProjectContext);
   console.log('Processor');
 
   React.useEffect(() => {
-    getProcessorInventory()
-  }, [])
+    getFarmerInventory()
+  }, [currentAccount])
 
   return (
     <div className="h-full">
@@ -81,7 +81,7 @@ export default function ProcessorInterFace() {
                       MarketPlace <AiOutlineArrowRight className="mt-1 ml-4" />
                     </h1>
                     <div className="card-box">
-                      {processorInventory?.map((product) => {
+                      {farmerInventory?.map((product) => {
                         let {
                           productName,
                           tokenId,
