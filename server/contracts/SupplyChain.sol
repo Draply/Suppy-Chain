@@ -162,7 +162,7 @@ contract SupplyChain {
     /// @notice Cancel the listing of a product
     /// @param _tokenID - The token id of the product to be canceled
     function cancelItem(uint256 _tokenID) external isOwner(_tokenID) {
-        Product memory product = s_farmerInventory[_tokenID];
+        Product memory product = s_providerinventory[_tokenID];
         delete (s_providerinventory[_tokenID]);
 
         emit ItemCanceled(
@@ -193,8 +193,9 @@ contract SupplyChain {
             product.cateory,
             msg.sender
         );
-        s_productOwners[product.tokenId].processorAddress = msg.sender;
-
+        s_productOwners[_tokenID].processorAddress = msg.sender;
+        (bool success, ) = payable(product.seller).call{value: 1}("");
+        require(success, "call failed");
         emit ItemBought(
             product.productName,
             product.barcode,
@@ -221,7 +222,7 @@ contract SupplyChain {
             block.timestamp
         );
         s_DataProduct[_tokenID].push(newdata);
-        s_productOwners[product.tokenId].farmerAddress = msg.sender;
+        s_productOwners[_tokenID].farmerAddress = msg.sender;
         (bool success, ) = payable(product.seller).call{value: 1}("");
         require(success, "call failed");
         emit ItemBought(
@@ -241,9 +242,6 @@ contract SupplyChain {
         s_DataProduct[_tokenID].push(newdata);
 
         Product memory product = s_distributerInventory[_tokenID];
-        if (msg.value != 1) {
-            revert PriceNotMet();
-        }
         delete (s_processorInventory[_tokenID]);
         s_distributerInventory[_tokenID] = Product(
             product.productName,
@@ -253,7 +251,7 @@ contract SupplyChain {
             product.cateory,
             msg.sender
         );
-        s_productOwners[product.tokenId].distributerAddress = msg.sender;
+        s_productOwners[_tokenID].distributerAddress = msg.sender;
         (bool success, ) = payable(product.seller).call{value: 1}("");
         require(success, "call failed");
         emit ItemBought(
@@ -273,9 +271,7 @@ contract SupplyChain {
         s_DataProduct[_tokenID].push(newdata);
 
         Product memory product = s_retailerInventory[_tokenID];
-        if (msg.value != 1) {
-            revert PriceNotMet();
-        }
+       
         delete (s_distributerInventory[_tokenID]);
         s_retailerInventory[_tokenID] = Product(
             product.productName,
@@ -285,7 +281,7 @@ contract SupplyChain {
             product.cateory,
             msg.sender
         );
-        s_productOwners[product.tokenId].retailerAddress = msg.sender;
+        s_productOwners[_tokenID].retailerAddress = msg.sender;
         (bool success, ) = payable(product.seller).call{value: 1}("");
         require(success, "call failed");
         emit ItemBought(
