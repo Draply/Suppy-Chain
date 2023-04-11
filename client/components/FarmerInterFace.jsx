@@ -9,6 +9,7 @@ import UserDetails from "./UserDetails";
 
 export default function FarmerInterFace() {
   const { currentAccount, allProducts, isLoading } = useContext(ProjectContext);
+  console.log('Farmer');
   return (
     <div className="h-full">
       <Header />

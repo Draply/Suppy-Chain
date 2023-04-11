@@ -20,6 +20,7 @@ export const ProjectContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
   const [distributerInventory, setDistributerInventory] = useState([]);
+  const [processorInventory, setProcessorInventory] = useState([]);
   const [productDistributer, setProductDistributer] = useState([]);
   const [allOwners, setAllOwners] = useState([]);
   const [isSingedIn, setIsSignedIn] = useState(false);
@@ -131,6 +132,12 @@ export const ProjectContextProvider = ({ children }) => {
     return () => {};
   }, []);
 
+  React.useEffect(() => {
+    window.ethereum.on("accountsChanged", async () => {
+      connectWallet();
+    });
+  }, []);
+
   const listProduct = async (name, quantity, category) => {
     try {
       if (
@@ -184,7 +191,7 @@ export const ProjectContextProvider = ({ children }) => {
             let getItem = await SupplyChain.getProviderListing(index);
             if (getItem.tokenId._hex > 0) {
               // setAllProducts((prev) => [getItem, ...prev]);
-              prod = [getItem,...prod];
+              prod = [getItem, ...prod];
             }
             setAllProducts(prod);
           }
@@ -217,7 +224,7 @@ export const ProjectContextProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Cancel error!");
     }
   };
 
@@ -245,6 +252,7 @@ export const ProjectContextProvider = ({ children }) => {
         }
       }
     } catch (error) {
+      console.log(error);
       toast.error(error.message);
     }
   };
@@ -265,14 +273,50 @@ export const ProjectContextProvider = ({ children }) => {
           setIsLoading(true);
 
           let tokenId = await SupplyChain.getTokenId();
-
-          for (let index = 0; index <= tokenId; index++) {
-            let getItem = await SupplyChain.getDistributerInventory(index);
+          let prod = [];
+          for (let index = 0; index <= Number(tokenId); index++) {
+            let getItem = await SupplyChain.getDistributorInventory(
+              Number(index)
+            );
             if (getItem.tokenId._hex > 0) {
-              setDistributerInventory((prev) => [getItem, ...prev]);
+              prod = [getItem, ...prod];
             }
           }
+          setDistributerInventory(prod);
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
+  const getProcessorInventory = async () => {
+    try {
+      if (
+        typeof window.ethereum !== "undefined" ||
+        typeof window.web3 !== "undefined"
+      ) {
+        const { ethereum } = window;
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          await provider.send("eth_requestAccounts", []);
+          const signer = provider.getSigner();
+          const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
+
+          setIsLoading(true);
+
+          let tokenId = await SupplyChain.getTokenId();
+          let prod = [];
+          for (let index = 0; index <= Number(tokenId); index++) {
+            let getItem = await SupplyChain.getProcessorInventory(
+              Number(index)
+            );
+            if (getItem.tokenId._hex > 0) {
+              prod = [getItem, ...prod];
+            }
+          }
+          setProcessorInventory(prod);
           setIsLoading(false);
         }
       }
@@ -531,7 +575,7 @@ export const ProjectContextProvider = ({ children }) => {
     checkIfWalletIsConnected();
     if (currentAccount) {
       getAllProducts();
-      getDistributerInventory();
+      // getDistributerInventory();
     }
     checkUser();
   }, [currentAccount, stateChanged]);
@@ -557,6 +601,9 @@ export const ProjectContextProvider = ({ children }) => {
         purchaseProduct,
         getOwners,
         allOwners,
+        processorInventory,
+        getProcessorInventory,
+        getDistributerInventory,
       }}
     >
       {children}

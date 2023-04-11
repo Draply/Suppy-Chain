@@ -14,17 +14,24 @@ export default function ProcessorInterFace() {
     currentAccount,
     allProducts,
     isLoading,
-    distributerInventory,
+    processorInventory,
     productDistributer,
+    getProcessorInventory
   } = useContext(ProjectContext);
+  console.log('Processor');
+
+  React.useEffect(() => {
+    getProcessorInventory()
+  }, [])
+
   return (
     <div className="h-full">
       <Header />
-      <div className="container-lg mx-auto">
+      <div className="mx-auto container-lg">
         {currentAccount ? (
           <div>
             {isLoading ? (
-              <div className="w-full h-screen flex items-center justify-center">
+              <div className="flex items-center justify-center w-full h-screen">
                 <Oval
                   height={40}
                   width={40}
@@ -39,18 +46,18 @@ export default function ProcessorInterFace() {
                 />
               </div>
             ) : (
-              <div className="container mx-auto py-8 flex items-start ">
+              <div className="container flex items-start py-8 mx-auto ">
                 <div className="flex flex-col items-start">
                   <SearchDistributer />
                   <UserDetails />
                 </div>
 
-                <div className="flex w-full ml-5 flex-col overflow-hidden">
-                  <div className="flex flex-col z-0">
-                    <h1 className="flex uppercase mb-8 text-2xl ml-5 font-bold">
+                <div className="flex flex-col w-full ml-5 overflow-hidden">
+                  <div className="z-0 flex flex-col">
+                    <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
                       Distributers <AiOutlineArrowRight className="mt-1 ml-4" />
                     </h1>
-                    <div className="w-96 mb-8 z-0 ">
+                    <div className="z-0 mb-8 w-96 ">
                       {productDistributer.productName ? (
                         <ProductCard
                           name={productDistributer.productName}
@@ -62,7 +69,7 @@ export default function ProcessorInterFace() {
                         />
                       ) : (
                         <div>
-                          <h1 className="font-semibold text-red-600 ml-8">
+                          <h1 className="ml-8 font-semibold text-red-600">
                             Not Found!
                           </h1>
                         </div>
@@ -70,11 +77,11 @@ export default function ProcessorInterFace() {
                     </div>
                   </div>
                   <div>
-                    <h1 className="flex uppercase mb-8 text-2xl ml-5 font-bold">
+                    <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
                       MarketPlace <AiOutlineArrowRight className="mt-1 ml-4" />
                     </h1>
                     <div className="card-box">
-                      {distributerInventory.map((product) => {
+                      {processorInventory?.map((product) => {
                         let {
                           productName,
                           tokenId,
@@ -86,7 +93,7 @@ export default function ProcessorInterFace() {
 
                         let tokenID = tokenId.toString();
                         let quantity = productQuantity.toString();
-                        let price = productPrice.toString();
+                        let price = productPrice?.toString();
                         let Seller = seller.toString();
                         let category = cateory.toUpperCase();
 
@@ -110,7 +117,7 @@ export default function ProcessorInterFace() {
             )}
           </div>
         ) : (
-          <div className="container mx-auto p-8 flex item-center justify-center">
+          <div className="container flex justify-center p-8 mx-auto item-center">
             <h1>Please Connect your wallet first</h1>
           </div>
         )}
