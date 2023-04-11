@@ -9,6 +9,7 @@ import UserDetails from "./UserDetails";
 
 export default function ProviderInterFace() {
   const { currentAccount, allProducts, isLoading } = useContext(ProjectContext);
+  console.log('Provider');
   return (
     <div className="h-full">
       <Header />

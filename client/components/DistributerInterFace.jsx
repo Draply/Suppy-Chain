@@ -9,16 +9,24 @@ import { AiOutlineArrowRight } from "react-icons/ai";
 import UserDetails from "./UserDetails";
 
 export default function DistributerInterFace() {
-  const { currentAccount, allProducts, isLoading, distributerInventory } =
+  const { currentAccount, allProducts, isLoading, distributerInventory, getDistributerInventory } =
     useContext(ProjectContext);
+
+
+  React.useEffect(() => {
+
+    getDistributerInventory()
+  }, [])
+
+  console.log('Distributer');
   return (
     <div className="h-full">
       <Header />
-      <div className="container-lg mx-auto">
+      <div className="mx-auto container-lg">
         {currentAccount ? (
           <div>
             {isLoading ? (
-              <div className="w-full h-screen flex items-center justify-center">
+              <div className="flex items-center justify-center w-full h-screen">
                 <Oval
                   height={40}
                   width={40}
@@ -33,11 +41,11 @@ export default function DistributerInterFace() {
                 />
               </div>
             ) : (
-              <div className="container mx-auto py-8 flex items-start  ">
+              <div className="container flex items-start py-8 mx-auto ">
                 <UserDetails />
-                <div className="flex flex-col items-start w-full z-0 ml-5 overflow-hidden">
+                <div className="z-0 flex flex-col items-start w-full ml-5 overflow-hidden">
                   {" "}
-                  <h1 className="flex uppercase mb-8 text-2xl ml-5 font-bold">
+                  <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
                     My Inventory <AiOutlineArrowRight className="mt-1 ml-4" />
                   </h1>
                   <Swiper
@@ -60,7 +68,7 @@ export default function DistributerInterFace() {
                         spaceBetween: 20,
                       },
                     }}
-                    className="w-full ml-8 z-0"
+                    className="z-0 w-full ml-8"
                   >
                     {distributerInventory.map((product) => {
                       let {
@@ -92,12 +100,12 @@ export default function DistributerInterFace() {
                       );
                     })}
                   </Swiper>
-                  <div className="w-full flex flex-col items-start">
-                    <h1 className="flex uppercase mb-8 text-2xl ml-5 font-bold">
+                  <div className="flex flex-col items-start w-full">
+                    <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
                       MarketPlace <AiOutlineArrowRight className="mt-1 ml-4" />
                     </h1>
                     <div className="card-box">
-                      {allProducts.map((product) => {
+                      {allProducts?.map((product) => {
                         let {
                           productName,
                           tokenId,
@@ -109,10 +117,9 @@ export default function DistributerInterFace() {
 
                         let tokenID = tokenId.toString();
                         let quantity = productQuantity.toString();
-                        let price = productPrice.toString();
+                        let price = productPrice?.toString();
                         let Seller = seller.toString();
                         let category = cateory.toUpperCase();
-
                         return (
                           <div key={tokenId} className="mb-8">
                             <ProductCard
@@ -133,7 +140,7 @@ export default function DistributerInterFace() {
             )}
           </div>
         ) : (
-          <div className="container mx-auto p-8 flex item-center justify-center">
+          <div className="container flex justify-center p-8 mx-auto item-center">
             <h1>Please Connect your wallet first</h1>
           </div>
         )}

@@ -20,6 +20,7 @@ export const ProjectContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
   const [distributerInventory, setDistributerInventory] = useState([]);
+  const [processorInventory, setProcessorInventory] = useState([]);
   const [productDistributer, setProductDistributer] = useState([]);
   const [allOwners, setAllOwners] = useState([]);
   const [isSingedIn, setIsSignedIn] = useState(false);
@@ -113,6 +114,30 @@ export const ProjectContextProvider = ({ children }) => {
     }
   };
 
+  const load = async () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
+    SupplyChain.on("ItemListed", () => {
+      toast.success("Item Listed Successfully");
+      getAllProducts();
+    });
+  };
+
+  React.useEffect(() => {
+    load().catch((err) => {
+      console.log("Load Error", err);
+    });
+    return () => {};
+  }, []);
+
+  React.useEffect(() => {
+    window.ethereum.on("accountsChanged", async () => {
+      connectWallet();
+    });
+  }, []);
+
   const listProduct = async (name, quantity, category) => {
     try {
       if (
@@ -125,6 +150,8 @@ export const ProjectContextProvider = ({ children }) => {
           const signer = provider.getSigner();
           const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
 
+          console.log(name, quantity, category);
+
           if (!name || !quantity || !category) {
             toast.error("Please Provide All The Details");
           }
@@ -136,12 +163,6 @@ export const ProjectContextProvider = ({ children }) => {
           );
 
           toast.loading("Listing Your Item...", { duration: 6000 });
-          SupplyChain.on("ItemListed", () => {
-            toast.success("Item Listed Successfully");
-            setStateChanged(!stateChanged);
-
-
-          });
         }
       }
     } catch (error) {
@@ -165,12 +186,14 @@ export const ProjectContextProvider = ({ children }) => {
           setIsLoading(true);
 
           let tokenId = await SupplyChain.getTokenId();
-
+          let prod = [];
           for (let index = 1; index <= tokenId; index++) {
             let getItem = await SupplyChain.getProviderListing(index);
             if (getItem.tokenId._hex > 0) {
-              setAllProducts((prev) => [getItem, ...prev]);
+              // setAllProducts((prev) => [getItem, ...prev]);
+              prod = [getItem, ...prod];
             }
+            setAllProducts(prod);
           }
 
           setIsLoading(false);
@@ -201,11 +224,11 @@ export const ProjectContextProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Cancel error!");
     }
   };
 
-  const updateInfo = async (tokenNumber, newdata,newdate) => {
+  const updateInfo = async (tokenNumber, newdata, newdate) => {
     try {
       if (
         typeof window.ethereum !== "undefined" ||
@@ -229,6 +252,7 @@ export const ProjectContextProvider = ({ children }) => {
         }
       }
     } catch (error) {
+      console.log(error);
       toast.error(error.message);
     }
   };
@@ -249,14 +273,50 @@ export const ProjectContextProvider = ({ children }) => {
           setIsLoading(true);
 
           let tokenId = await SupplyChain.getTokenId();
-
-          for (let index = 0; index <= tokenId; index++) {
-            let getItem = await SupplyChain.getDistributerInventory(index);
+          let prod = [];
+          for (let index = 0; index <= Number(tokenId); index++) {
+            let getItem = await SupplyChain.getDistributorInventory(
+              Number(index)
+            );
             if (getItem.tokenId._hex > 0) {
-              setDistributerInventory((prev) => [getItem, ...prev]);
+              prod = [getItem, ...prod];
             }
           }
+          setDistributerInventory(prod);
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
+  const getProcessorInventory = async () => {
+    try {
+      if (
+        typeof window.ethereum !== "undefined" ||
+        typeof window.web3 !== "undefined"
+      ) {
+        const { ethereum } = window;
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          await provider.send("eth_requestAccounts", []);
+          const signer = provider.getSigner();
+          const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
+
+          setIsLoading(true);
+
+          let tokenId = await SupplyChain.getTokenId();
+          let prod = [];
+          for (let index = 0; index <= Number(tokenId); index++) {
+            let getItem = await SupplyChain.getProcessorInventory(
+              Number(index)
+            );
+            if (getItem.tokenId._hex > 0) {
+              prod = [getItem, ...prod];
+            }
+          }
+          setProcessorInventory(prod);
           setIsLoading(false);
         }
       }
@@ -385,7 +445,8 @@ export const ProjectContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-  const buyItemfromprovider = async (tokenNumber) => { // Provider to Farmer
+  const buyItemfromprovider = async (tokenNumber) => {
+    // Provider to Farmer
     try {
       if (
         typeof window.ethereum !== "undefined" ||
@@ -408,7 +469,8 @@ export const ProjectContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-  const buyItemfromfamer = async (tokenNumber) => { //Farmer to  Processors
+  const buyItemfromfamer = async (tokenNumber) => {
+    //Farmer to  Processors
     try {
       if (
         typeof window.ethereum !== "undefined" ||
@@ -431,7 +493,8 @@ export const ProjectContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-  const buyItemfromProcessor = async (tokenNumber) => { //processors to distributor 
+  const buyItemfromProcessor = async (tokenNumber) => {
+    //processors to distributor
     try {
       if (
         typeof window.ethereum !== "undefined" ||
@@ -442,7 +505,9 @@ export const ProjectContextProvider = ({ children }) => {
           const provider = new ethers.providers.Web3Provider(ethereum);
           const signer = provider.getSigner();
           const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
-          let fromprocessor = await SupplyChain.buyItemfromProcessor(tokenNumber);
+          let fromprocessor = await SupplyChain.buyItemfromProcessor(
+            tokenNumber
+          );
           toast.loading("Buying ..", { duration: 4000 });
           SupplyChain.on("DataUpdated", () => {
             toast.success("Data Updated!");
@@ -454,7 +519,8 @@ export const ProjectContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-  const buyItemfromdistributor = async (tokenNumber) => { //from  distributor to retailers 
+  const buyItemfromdistributor = async (tokenNumber) => {
+    //from  distributor to retailers
     try {
       if (
         typeof window.ethereum !== "undefined" ||
@@ -465,7 +531,9 @@ export const ProjectContextProvider = ({ children }) => {
           const provider = new ethers.providers.Web3Provider(ethereum);
           const signer = provider.getSigner();
           const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
-          let fromdistributor = await SupplyChain.buyItemfromdistributor(tokenNumber);
+          let fromdistributor = await SupplyChain.buyItemfromdistributor(
+            tokenNumber
+          );
           toast.loading("Buying ..", { duration: 4000 });
           SupplyChain.on("DataUpdated", () => {
             toast.success("Data Updated!");
@@ -477,7 +545,8 @@ export const ProjectContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-  const getData = async (tokenNumber) => {   //Get data 
+  const getData = async (tokenNumber) => {
+    //Get data
     try {
       if (
         typeof window.ethereum !== "undefined" ||
@@ -489,7 +558,7 @@ export const ProjectContextProvider = ({ children }) => {
           const signer = provider.getSigner();
           const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
           let fromdistributor = await SupplyChain.getData(tokenNumber);
-          
+
           toast.loading("Updating Data", { duration: 4000 });
           SupplyChain.on("DataUpdated", () => {
             toast.success("Data Updated!");
@@ -502,14 +571,11 @@ export const ProjectContextProvider = ({ children }) => {
     }
   };
 
-
-
-
   useEffect(() => {
     checkIfWalletIsConnected();
     if (currentAccount) {
       getAllProducts();
-      getDistributerInventory();
+      // getDistributerInventory();
     }
     checkUser();
   }, [currentAccount, stateChanged]);
@@ -535,6 +601,9 @@ export const ProjectContextProvider = ({ children }) => {
         purchaseProduct,
         getOwners,
         allOwners,
+        processorInventory,
+        getProcessorInventory,
+        getDistributerInventory,
       }}
     >
       {children}
