@@ -26,6 +26,9 @@ export const ProjectContextProvider = ({ children }) => {
   const [isSingedIn, setIsSignedIn] = useState(false);
   const [userProfession, setUserProfession] = useState();
   const [stateChanged, setStateChanged] = useState(false);
+  const [retailInventory, setRetailInventory] = useState([]);
+  const [farmerInventory, setFarmerInventory] = useState([]);
+  const [providerInventory, setProviderInventory] = useState([]);
 
   /**
    * Prompts user to connect their MetaMask wallet
@@ -130,7 +133,7 @@ export const ProjectContextProvider = ({ children }) => {
       console.log("Load Error", err);
     });
     return () => {};
-  }, []);
+  }, [currentAccount]);
 
   React.useEffect(() => {
     window.ethereum.on("accountsChanged", async () => {
@@ -324,8 +327,8 @@ export const ProjectContextProvider = ({ children }) => {
       console.log(error.message);
     }
   };
-
-  const buyProduct = async (tokenNumber, price) => {
+  // TODO
+  const getFarmerInventory = async () => {
     try {
       if (
         typeof window.ethereum !== "undefined" ||
@@ -334,24 +337,120 @@ export const ProjectContextProvider = ({ children }) => {
         const { ethereum } = window;
         if (ethereum) {
           const provider = new ethers.providers.Web3Provider(ethereum);
+          await provider.send("eth_requestAccounts", []);
           const signer = provider.getSigner();
           const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
-          let token = parseInt(tokenNumber);
 
-          let buyItem = await SupplyChain.buyItem(token, {
-            value: price,
-          });
-          toast.loading("Buying product...", { duration: 4000 });
-          SupplyChain.on("ItemBought", () => {
-            toast.success("Item Bought! Added to Your inventory");
-            setStateChanged(!stateChanged);
-          });
+          setIsLoading(true);
+
+          let tokenId = await SupplyChain.getTokenId();
+          let prod = [];
+          for (let index = 0; index <= Number(tokenId); index++) {
+            let getItem = await SupplyChain.getFarmerInventory(Number(index));
+            if (getItem.tokenId._hex > 0) {
+              prod = [getItem, ...prod];
+            }
+          }
+          setFarmerInventory(prod);
+          setIsLoading(false);
         }
       }
     } catch (error) {
-      toast.error(error.message);
+      console.log(error.message);
     }
   };
+
+  // TODO
+  const getRetailInventory = async () => {
+    try {
+      if (
+        typeof window.ethereum !== "undefined" ||
+        typeof window.web3 !== "undefined"
+      ) {
+        const { ethereum } = window;
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          await provider.send("eth_requestAccounts", []);
+          const signer = provider.getSigner();
+          const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
+
+          setIsLoading(true);
+
+          let tokenId = await SupplyChain.getTokenId();
+          let prod = [];
+          for (let index = 0; index <= Number(tokenId); index++) {
+            let getItem = await SupplyChain.getRetailInventory(Number(index));
+            if (getItem.tokenId._hex > 0) {
+              prod = [getItem, ...prod];
+            }
+          }
+          setRetailInventory(prod);
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // TODO
+  const getProviderInventory = async () => {
+    try {
+      if (
+        typeof window.ethereum !== "undefined" ||
+        typeof window.web3 !== "undefined"
+      ) {
+        const { ethereum } = window;
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          await provider.send("eth_requestAccounts", []);
+          const signer = provider.getSigner();
+          const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
+
+          setIsLoading(true);
+
+          let tokenId = await SupplyChain.getTokenId();
+          let prod = [];
+          for (let index = 0; index <= Number(tokenId); index++) {
+            let getItem = await SupplyChain.getProviderListing(Number(index));
+            if (getItem.tokenId._hex > 0) {
+              prod = [getItem, ...prod];
+            }
+          }
+          setProviderInventory(prod);
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // const buyProduct = async (tokenNumber) => {
+  //   try {
+  //     if (
+  //       typeof window.ethereum !== "undefined" ||
+  //       typeof window.web3 !== "undefined"
+  //     ) {
+  //       const { ethereum } = window;
+  //       if (ethereum) {
+  //         const provider = new ethers.providers.Web3Provider(ethereum);
+  //         const signer = provider.getSigner();
+  //         const SupplyChain = new ethers.Contract(contractAddress, ABI, signer);
+  //         let token = parseInt(tokenNumber);
+  //         console.log(token);
+
+  //         toast.loading("Buying product...", { duration: 4000 });
+  //         SupplyChain.on("ItemBought", () => {
+  //           toast.success("Item Bought! Added to Your inventory");
+  //           setStateChanged(!stateChanged);
+  //         });
+  //       }
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message);
+  //   }
+  // };
 
   const purchaseProduct = async (tokenNumber, price) => {
     try {
@@ -575,7 +674,8 @@ export const ProjectContextProvider = ({ children }) => {
     checkIfWalletIsConnected();
     if (currentAccount) {
       getAllProducts();
-      // getDistributerInventory();
+      getDistributerInventory();
+      getProcessorInventory();
     }
     checkUser();
   }, [currentAccount, stateChanged]);
@@ -594,16 +694,32 @@ export const ProjectContextProvider = ({ children }) => {
         isLoading,
         cancelProduct,
         updateInfo,
-        buyProduct,
         distributerInventory,
         productDistributer,
         getDistributer,
         purchaseProduct,
         getOwners,
         allOwners,
-        processorInventory,
+        //
         getProcessorInventory,
+        processorInventory,
+        //
         getDistributerInventory,
+        distributerInventory,
+        //
+        getFarmerInventory,
+        farmerInventory,
+        //
+        getRetailInventory,
+        retailInventory,
+        //
+        getProviderInventory,
+        providerInventory,
+        
+        buyItemfromProcessor,
+        buyItemfromdistributor,
+        buyItemfromprovider,
+        buyItemfromfamer,
       }}
     >
       {children}
