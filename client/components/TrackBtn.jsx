@@ -5,6 +5,12 @@ import { MdClose, MdOutlineTrackChanges, MdContentCopy } from "react-icons/md";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "react-hot-toast";
 
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+
+import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
+import '@mui/material'
 const customStyles = {
   content: {
     top: "50%",
@@ -20,11 +26,14 @@ const customStyles = {
 
 export default function TrackBtn() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [tokenId, setTokenId] = useState();
-  const { getOwners, allOwners } = useContext(ProjectContext);
+  const [tokenId, setTokenId] = useState('');
+  const { getOwners, allOwners, getData, data } = useContext(ProjectContext);
 
   const handleTracking = () => {
-    getOwners(tokenId);
+    if (tokenId) {
+      getOwners(tokenId);
+      getData(tokenId);
+    }
   };
 
   return (
@@ -54,55 +63,49 @@ export default function TrackBtn() {
               />
             </div>
 
-            <div>
-              {typeof allOwners.farmerAddress !== "undefined" ||
-              typeof allOwners.distributerAddress !== "undefined" ||
-              typeof allOwners.retailerAddress !== "undefined" ? (
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900">
-                        
-                  </label>
-                  <div className="flex flex-col items-start mb-4 text-md font-medium text-gray-900">
-                    Farmer Address :{" "}
-                    <div
-                      className=" my-2 py-1 px-4 bg-gray-200 rounded-full text-gray-500 flex items-center cursor-copy"
-                      onClick={() => toast.success("Copied to Clipboard")}
-                    >
-                      <MdContentCopy className="mr-1" />
-                      <CopyToClipboard text={allOwners.farmerAddress}>
-                        <span>{allOwners.farmerAddress}</span>
-                      </CopyToClipboard>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-start mb-4 text-md font-medium text-gray-900">
-                    Distributer Address :{" "}
-                    <div
-                      className=" my-2 py-1 px-4 bg-gray-200 rounded-full text-gray-500 flex items-center cursor-copy"
-                      onClick={() => toast.success("Copied to Clipboard")}
-                    >
-                      <MdContentCopy className="mr-1" />
-                      <CopyToClipboard text={allOwners.distributerAddress}>
-                        <span>{allOwners.distributerAddress}</span>
-                      </CopyToClipboard>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-start mb-4 text-md font-medium text-gray-900">
-                    Retailer Address :{" "}
-                    <div
-                      className=" my-2 py-1 px-4 bg-gray-200 rounded-full text-gray-500 flex items-center cursor-copy"
-                      onClick={() => toast.success("Copied to Clipboard")}
-                    >
-                      <MdContentCopy className="mr-1" />
-                      <CopyToClipboard text={allOwners.retailerAddress}>
-                        <span>{allOwners.retailerAddress}</span>
-                      </CopyToClipboard>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div></div>
-              )}
-            </div>
+            {
+              data ?
+                <Box sx={{ height: 400,  width: 780 }}>
+                  <DataGrid
+                    rows={data?.map((dat, idx) => {
+                      const time = new Date(Number(dat[2]) * 1000).toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
+                      const _address = dat[0].toString()
+                      const address = _address.substring(0, 4) + '...' + _address.substring(_address.length - 4, _address.length)
+                      return {
+                        id: idx,
+                        address,
+                        note: dat[1],
+                        at: time
+                      }
+                    })}
+                    columns={[
+                      { field: 'id', headerName: 'ID', width: 90 },
+                      { field: 'address', headerName: 'Address', width: 120 },
+                      {
+                        field: 'note',
+                        headerName: 'Note',
+                        width: 250,
+                      },
+                      {
+                        field: 'at',
+                        headerName: 'At',
+                        width: 250,
+                      },
+
+                    ]}
+                    onCellDoubleClick={(params) => {
+                      if (params?.id !== undefined && data[params?.id][0]) {
+                        window.navigator.clipboard.writeText(data[params?.id][0]?.toString())
+                        toast.success('Copied to clipboard! Address');
+                      }
+                    }}
+
+                  />
+                </Box> : <React.Fragment></React.Fragment>
+            }
+
+
+
 
             <button
               className="bg-blue-600 hover:bg-blue-900 rounded-full text-white  py-3 px-9 focus:outline-none focus:shadow-outline uppercase flex items-center justify-center cursor-pointer font-semibold w-full mt-4"

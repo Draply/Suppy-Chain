@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@material-ui/core": "^4.12.4",
+    "@mui/material": "^5.12.0",
+    "@mui/styled-engine-sc": "^5.12.0",
+    "@mui/x-data-grid": "^6.1.0",
     "ethers": "^5.7.2",
     "firebase": "^9.15.0",
     "next": "^13.0.6",
@@ -19,6 +25,7 @@
     "react-icons": "^4.7.1",
     "react-loader-spinner": "^5.3.4",
     "react-modal": "^3.16.1",
+    "styled-components": "^5.3.9",
     "swiper": "^8.4.5"
   },
   "devDependencies": {

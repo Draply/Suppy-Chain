@@ -8,8 +8,19 @@ import { AiOutlineArrowRight } from "react-icons/ai";
 import UserDetails from "./UserDetails";
 
 export default function FarmerInterFace() {
+<<<<<<< Updated upstream
   const { currentAccount, allProducts, isLoading } = useContext(ProjectContext);
   console.log('Farmer');
+=======
+  const { currentAccount, allProducts, isLoading, getProviderInventory,getFarmerInventory,farmerInventory,
+    providerInventory } = useContext(ProjectContext);
+  console.log('Farmer');
+
+  // React.useEffect(() => {
+  //   getProviderInventory()
+  // }, [])
+
+>>>>>>> Stashed changes
   return (
     <div className="h-full">
       <Header />
@@ -34,21 +45,32 @@ export default function FarmerInterFace() {
             ) : (
               <div className="container mx-auto py-8 flex items-start">
                 <div className="flex flex-col items-start">
-                  <SellProduct />
                   <UserDetails />
                 </div>
 
+<<<<<<< Updated upstream
                 <div className="w-full flex flex-col items-start">
                   <h1 className="flex uppercase mb-8 text-2xl ml-6 font-bold">
                     My Listing <AiOutlineArrowRight className="mt-1 ml-4" />
                   </h1>
                   <div className="card-box ml-5">
                     {allProducts.map((product) => {
+=======
+                <div className="flex flex-col items-start w-full">
+                  <h1 className="flex mb-8 ml-6 text-2xl font-bold uppercase">
+                    My Inventory <AiOutlineArrowRight className="mt-1 ml-4" />
+                  </h1>
+                  <div className="ml-5 card-box">
+                    {farmerInventory.map((product) => {
+>>>>>>> Stashed changes
                       let {
                         productName,
                         tokenId,
                         productQuantity,
+<<<<<<< Updated upstream
                         
+=======
+>>>>>>> Stashed changes
                         cateory,
                         seller,
                       } = product;

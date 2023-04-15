@@ -1,14 +1,13 @@
 import React, { useContext } from "react";
+import SellProduct from "../components/SellProduct";
 import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
 import { Oval } from "react-loader-spinner";
 import { ProjectContext } from "../context/ProjectContext";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import UserDetails from "./UserDetails";
-import SearchDistributer from "./SearchDistributer";
 
+<<<<<<< Updated upstream
 export default function RetailerInterFace() {
   console.log('Retailer');
   const {
@@ -18,12 +17,22 @@ export default function RetailerInterFace() {
     distributerInventory,
     productDistributer,
   } = useContext(ProjectContext);
+=======
+export default function FarmerInterFace() {
+  const { currentAccount, allProducts, isLoading,processorInventory,distributerInventory,retailInventory } = useContext(ProjectContext);
+  console.log('Farmer');
+
+  // React.useEffect(() => {
+  //   getProviderInventory()
+  // }, [])
+
+>>>>>>> Stashed changes
   return (
     <div className="h-full">
       <Header />
-      <div className="mx-auto container-lg">
+      <div>
         {currentAccount ? (
-          <div>
+          <div className="mx-auto container-lg ">
             {isLoading ? (
               <div className="flex items-center justify-center w-full h-screen">
                 <Oval
@@ -40,71 +49,79 @@ export default function RetailerInterFace() {
                 />
               </div>
             ) : (
-              <div className="container flex items-start py-8 mx-auto ">
+              <div className="container flex items-start py-8 mx-auto">
                 <div className="flex flex-col items-start">
-                  <SearchDistributer />
                   <UserDetails />
                 </div>
 
-                <div className="flex flex-col w-full ml-5 overflow-hidden">
-                  <div className="z-0 flex flex-col">
-                    <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
-                      Distributers <AiOutlineArrowRight className="mt-1 ml-4" />
-                    </h1>
-                    <div className="z-0 mb-8 w-96 ">
-                      {productDistributer.productName ? (
-                        <ProductCard
-                          name={productDistributer.productName}
-                          tokenID={productDistributer.tokenId.toString()}
-                          quantity={productDistributer.productQuantity.toString()}
-                          price={productDistributer.productPrice.toString()}
-                          Category={productDistributer.cateory}
-                          Seller={productDistributer.seller}
-                        />
-                      ) : (
-                        <div>
-                          <h1 className="ml-8 font-semibold text-red-600">
-                            Not Found!
-                          </h1>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
-                      MarketPlace <AiOutlineArrowRight className="mt-1 ml-4" />
-                    </h1>
-                    <div className="card-box">
-                      {distributerInventory.map((product) => {
-                        let {
-                          productName,
-                          tokenId,
-                          productQuantity,
-                          productPrice,
-                          cateory,
-                          seller,
-                        } = product;
+                <div className="flex flex-col items-start w-full">
+                  <h1 className="flex mb-8 ml-6 text-2xl font-bold uppercase">
+                    My Inventory <AiOutlineArrowRight className="mt-1 ml-4" />
+                  </h1>
+                  <div className="ml-5 card-box">
+                    {retailInventory.map((product) => {
+                      let {
+                        productName,
+                        tokenId,
+                        productQuantity,
+                        cateory,
+                        seller,
+                      } = product;
 
-                        let tokenID = tokenId.toString();
-                        let quantity = productQuantity.toString();
-                        let price = productPrice.toString();
-                        let Seller = seller.toString();
-                        let category = cateory.toUpperCase();
+                      let tokenID = tokenId.toString();
+                      let quantity = productQuantity.toString();
+                      let Seller = seller.toString();
+                      let category = cateory.toUpperCase();
 
+
+                      if (Seller.toLowerCase() == currentAccount) {
                         return (
                           <div key={tokenId} className="mb-8">
                             <ProductCard
                               name={productName}
                               tokenID={tokenID}
                               quantity={quantity}
-                              price={price}
                               Category={category}
                               Seller={Seller}
                             />
                           </div>
                         );
-                      })}
-                    </div>
+                      }
+                    })}
+                  </div>
+                  <h1 className="flex mb-8 ml-6 text-2xl font-bold uppercase">
+                    MarketPlace <AiOutlineArrowRight className="mt-1 ml-4" />
+                  </h1>
+                  <div className="ml-5 card-box">
+                    {distributerInventory?.map((product) => {
+                      let {
+                        productName,
+                        tokenId,
+                        productQuantity,
+                        productPrice,
+                        cateory,
+                        seller,
+                      } = product;
+
+                      let tokenID = tokenId.toString();
+                      let quantity = productQuantity.toString();
+                      let price = productPrice?.toString();
+                      let Seller = seller.toString();
+                      let category = cateory.toUpperCase();
+
+                      return (
+                        <div key={tokenId} className="mb-8">
+                          <ProductCard
+                            name={productName}
+                            tokenID={tokenID}
+                            quantity={quantity}
+                            price={price}
+                            Category={category}
+                            Seller={Seller}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

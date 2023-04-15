@@ -34,7 +34,14 @@ export default function ProductCard({
     currentAccount,
     cancelProduct,
     updateInfo,
+<<<<<<< Updated upstream
     buyProduct,
+=======
+    buyItemfromprocessor,
+    buyItemfromdistributor,
+    buyItemfromprovider,
+    buyItemfromfamer,
+>>>>>>> Stashed changes
     purchaseProduct,
     userProfession,
   } = useContext(ProjectContext);
@@ -49,7 +56,7 @@ export default function ProductCard({
   }, [currentAccount]);
 
   const handleCancel = () => {
-    cancelProduct(tokenID);
+    cancelProduct(tokenID+1);
     setModalIsOpen(!modalIsOpen);
   };
 
@@ -65,8 +72,24 @@ export default function ProductCard({
     }
   };
 
+<<<<<<< Updated upstream
   const handleBuying = () => {
     buyProduct(tokenID);
+=======
+  const handleBuying = async () => {
+    if (userProfession == "retailer") {
+      buyItemfromdistributor(tokenID);
+    } else if (userProfession == "farmer") {
+      buyItemfromprovider(tokenID);
+    } else if (userProfession == "processor") {
+       buyItemfromfamer(tokenID);
+    } else if (userProfession == "distributer") {
+      buyItemfromprocessor(tokenID);
+    } else {
+      return;
+    }
+    // buyItemfromprovider(tokenID);
+>>>>>>> Stashed changes
     setModalIsOpen(!modalIsOpen);
   };
 
@@ -155,10 +178,10 @@ export default function ProductCard({
                 </button>
               </div>
             </div>
-          ) : userProfession == "distributer" ? (
+          ): userProfession != "constumer" ? (
             <div>
               <button
-                className={`${currentAccount?.toLowerCase() !== Seller.toLowerCase() ? 'flex' : 'hidden'} items-center justify-center px-8 py-2 font-semibold text-white uppercase bg-blue-600 rounded-full cursor-pointer hover:bg-blue-900 focus:outline-none focus:shadow-outline`}
+                className="bg-blue-600 hover:bg-blue-900 rounded-full text-white  py-2 px-8 focus:outline-none focus:shadow-outline uppercase flex items-center justify-center cursor-pointer font-semibold"
                 onClick={handleBuying}
               >
                 buy
@@ -166,14 +189,14 @@ export default function ProductCard({
             </div>
           ) : (
             <div
-              className="items-center justify-center hidden px-8 py-2 font-semibold text-white uppercase bg-blue-600 rounded-full cursor-pointer hover:bg-blue-900 focus:outline-none focus:shadow-outline"
+              className="bg-blue-600 hover:bg-blue-900 rounded-full text-white  py-2 px-8 focus:outline-none focus:shadow-outline uppercase flex items-center justify-center cursor-pointer font-semibold"
               onClick={handlePurchase}
             >
               Purchase
             </div>
           )}
         </div>
-      </Modal >
+      </Modal>
       <div className="z-10 px-6 py-8 bg-white rounded-lg shadow-lg">
         <div
           className="flex items-center w-1/2 px-4 py-1 mb-4 text-gray-500 bg-gray-200 rounded-full cursor-copy "
@@ -200,9 +223,8 @@ export default function ProductCard({
           </div>
           <div className="block mb-4 font-medium text-gray-900 text-md">
             Total Quantity : {quantity} Kg
-          </div>
-          <div className="flex items-start mb-6 font-medium text-gray-900 text-md">
-
+          
+          
           </div>
         </div>
       </div>

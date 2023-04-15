@@ -31,6 +31,8 @@ export default function ConsumerInterFace() {
             <div className="container flex items-center justify-center w-full py-8 mx-auto">
               <UserDetails />
             </div>
+            
+
           )
         ) : (
           <div className="container flex justify-center p-8 mx-auto item-center">

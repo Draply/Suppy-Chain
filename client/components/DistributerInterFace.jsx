@@ -1,30 +1,41 @@
 import React, { useContext } from "react";
+import SellProduct from "../components/SellProduct";
 import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
 import { Oval } from "react-loader-spinner";
 import { ProjectContext } from "../context/ProjectContext";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import UserDetails from "./UserDetails";
 
+<<<<<<< Updated upstream
 export default function DistributerInterFace() {
   const { currentAccount, allProducts, isLoading, distributerInventory, getDistributerInventory } =
     useContext(ProjectContext);
+=======
+export default function FarmerInterFace() {
+  const { currentAccount, allProducts, isLoading,processorInventory,distributerInventory } = useContext(ProjectContext);
+  console.log('Farmer');
+>>>>>>> Stashed changes
 
+  // React.useEffect(() => {
+  //   getProviderInventory()
+  // }, [])
 
+<<<<<<< Updated upstream
   React.useEffect(() => {
 
     getDistributerInventory()
   }, [])
 
   console.log('Distributer');
+=======
+>>>>>>> Stashed changes
   return (
     <div className="h-full">
       <Header />
-      <div className="mx-auto container-lg">
+      <div>
         {currentAccount ? (
-          <div>
+          <div className="mx-auto container-lg ">
             {isLoading ? (
               <div className="flex items-center justify-center w-full h-screen">
                 <Oval
@@ -41,24 +52,26 @@ export default function DistributerInterFace() {
                 />
               </div>
             ) : (
-              <div className="container flex items-start py-8 mx-auto ">
-                <UserDetails />
-                <div className="z-0 flex flex-col items-start w-full ml-5 overflow-hidden">
-                  {" "}
-                  <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
+              <div className="container flex items-start py-8 mx-auto">
+                <div className="flex flex-col items-start">
+                  <UserDetails />
+                </div>
+
+                <div className="flex flex-col items-start w-full">
+                  <h1 className="flex mb-8 ml-6 text-2xl font-bold uppercase">
                     My Inventory <AiOutlineArrowRight className="mt-1 ml-4" />
                   </h1>
-                  <Swiper
-                    autoplay={false}
-                    loop={true}
-                    spaceBetween={10}
-                    slidesPerView="auto"
-                    breakpoints={{
-                      320: {
-                        slidesPerView: 1.25,
-                        spaceBetween: 30,
-                      },
+                  <div className="ml-5 card-box">
+                    {distributerInventory.map((product) => {
+                      let {
+                        productName,
+                        tokenId,
+                        productQuantity,
+                        cateory,
+                        seller,
+                      } = product;
 
+<<<<<<< Updated upstream
                       1024: {
                         slidesPerView: 2.25,
                         spaceBetween: 20,
@@ -71,6 +84,34 @@ export default function DistributerInterFace() {
                     className="z-0 w-full ml-8"
                   >
                     {distributerInventory.map((product) => {
+=======
+                      let tokenID = tokenId.toString();
+                      let quantity = productQuantity.toString();
+                      let Seller = seller.toString();
+                      let category = cateory.toUpperCase();
+
+
+                      if (Seller.toLowerCase() == currentAccount) {
+                        return (
+                          <div key={tokenId} className="mb-8">
+                            <ProductCard
+                              name={productName}
+                              tokenID={tokenID}
+                              quantity={quantity}
+                              Category={category}
+                              Seller={Seller}
+                            />
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                  <h1 className="flex mb-8 ml-6 text-2xl font-bold uppercase">
+                    MarketPlace <AiOutlineArrowRight className="mt-1 ml-4" />
+                  </h1>
+                  <div className="ml-5 card-box">
+                    {processorInventory?.map((product) => {
+>>>>>>> Stashed changes
                       let {
                         productName,
                         tokenId,
@@ -82,12 +123,12 @@ export default function DistributerInterFace() {
 
                       let tokenID = tokenId.toString();
                       let quantity = productQuantity.toString();
-                      let price = productPrice.toString();
+                      let price = productPrice?.toString();
                       let Seller = seller.toString();
                       let category = cateory.toUpperCase();
 
                       return (
-                        <SwiperSlide key={tokenId} className="mb-8">
+                        <div key={tokenId} className="mb-8">
                           <ProductCard
                             name={productName}
                             tokenID={tokenID}
@@ -96,44 +137,9 @@ export default function DistributerInterFace() {
                             Category={category}
                             Seller={Seller}
                           />
-                        </SwiperSlide>
+                        </div>
                       );
                     })}
-                  </Swiper>
-                  <div className="flex flex-col items-start w-full">
-                    <h1 className="flex mb-8 ml-5 text-2xl font-bold uppercase">
-                      MarketPlace <AiOutlineArrowRight className="mt-1 ml-4" />
-                    </h1>
-                    <div className="card-box">
-                      {allProducts?.map((product) => {
-                        let {
-                          productName,
-                          tokenId,
-                          productQuantity,
-                          productPrice,
-                          cateory,
-                          seller,
-                        } = product;
-
-                        let tokenID = tokenId.toString();
-                        let quantity = productQuantity.toString();
-                        let price = productPrice?.toString();
-                        let Seller = seller.toString();
-                        let category = cateory.toUpperCase();
-                        return (
-                          <div key={tokenId} className="mb-8">
-                            <ProductCard
-                              name={productName}
-                              tokenID={tokenID}
-                              quantity={quantity}
-                              price={price}
-                              Category={category}
-                              Seller={Seller}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
                   </div>
                 </div>
               </div>
